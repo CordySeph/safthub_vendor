@@ -1,0 +1,160 @@
+{
+  "module": "product",
+  "action": "create",
+  "description": "Add a new product to the POS system",
+  "endpoint": {
+    "method": "POST",
+    "url": "/api/products"
+  },
+  "request": {
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer <jwt_token>"
+    },
+    "body": {
+      "name": {
+        "type": "string",
+        "example": "Iced Americano",
+        "description": "ชื่อสินค้า"
+      },
+      "sku": {
+        "type": "string",
+        "example": "AMR001",
+        "description": "รหัสสินค้า (SKU)"
+      },
+      "category_id": {
+        "type": "string",
+        "example": "cafe-coffee",
+        "description": "รหัสหมวดหมู่สินค้า"
+      },
+      "price": {
+        "type": "number",
+        "example": 60.0,
+        "description": "ราคาขายต่อหน่วย"
+      },
+      "cost": {
+        "type": "number",
+        "example": 25.0,
+        "description": "ต้นทุนสินค้า"
+      },
+      "unit": {
+        "type": "string",
+        "example": "cup",
+        "description": "หน่วยนับสินค้า เช่น ชิ้น, แก้ว, กล่อง"
+      },
+      "stock_quantity": {
+        "type": "integer",
+        "example": 50,
+        "description": "จำนวนคงเหลือในสต็อก"
+      },
+      "barcode": {
+        "type": "string",
+        "example": "8851234567890",
+        "description": "บาร์โค้ดสินค้า"
+      },
+      "description": {
+        "type": "string",
+        "example": "กาแฟอเมริกาโน่เย็น ขนาด 16 oz",
+        "description": "รายละเอียดสินค้า"
+      },
+      "image_url": {
+        "type": "string",
+        "example": "https://cdn.example.com/images/iced_americano.jpg",
+        "description": "URL ของรูปภาพสินค้า"
+      },
+      "is_active": {
+        "type": "boolean",
+        "example": true,
+        "description": "สถานะเปิดขาย (true = เปิดขาย)"
+      }
+    },
+    "validation": {
+      "required": ["name", "price", "unit"],
+      "rules": {
+        "name": "string|min:2|max:100",
+        "price": "number|min:0",
+        "cost": "number|min:0",
+        "stock_quantity": "integer|min:0"
+      }
+    }
+  },
+  "response": {
+    "201": {
+      "success": {
+        "type": "boolean",
+        "example": true
+      },
+      "message": {
+        "type": "string",
+        "example": "Product created successfully"
+      },
+      "data": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "b2f98a7d-0a31-4d0a-9bb4-345da018b2d1"
+        },
+        "name": { "type": "string", "example": "Iced Americano" },
+        "sku": { "type": "string", "example": "AMR001" },
+        "price": { "type": "number", "example": 60.0 },
+        "cost": { "type": "number", "example": 25.0 },
+        "unit": { "type": "string", "example": "cup" },
+        "stock_quantity": { "type": "integer", "example": 50 },
+        "category_id": { "type": "string", "example": "cafe-coffee" },
+        "barcode": { "type": "string", "example": "8851234567890" },
+        "description": { "type": "string", "example": "กาแฟอเมริกาโน่เย็น ขนาด 16 oz" },
+        "image_url": { "type": "string", "example": "https://cdn.example.com/images/iced_americano.jpg" },
+        "is_active": { "type": "boolean", "example": true },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2025-10-24T15:00:00Z"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2025-10-24T15:00:00Z"
+        }
+      }
+    },
+    "400": {
+      "success": { "type": "boolean", "example": false },
+      "message": { "type": "string", "example": "Invalid product data" }
+    },
+    "401": {
+      "success": { "type": "boolean", "example": false },
+      "message": { "type": "string", "example": "Unauthorized access" }
+    }
+  },
+  "database": {
+    "table": "products",
+    "fields": {
+      "id": "uuid (PK)",
+      "store_id": "uuid (FK)",
+      "name": "string",
+      "sku": "string",
+      "category_id": "string",
+      "price": "number (decimal(10,2))",
+      "cost": "number (decimal(10,2))",
+      "unit": "string",
+      "stock_quantity": "integer",
+      "barcode": "string",
+      "description": "string (text)",
+      "image_url": "string",
+      "is_active": "boolean",
+      "created_at": "datetime",
+      "updated_at": "datetime"
+    }
+  },
+  "permission": {
+    "roles_allowed": ["owner", "admin", "cashier"],
+    "requires_auth": true
+  },
+  "workflow": [
+    "1. Validate product input",
+    "2. Check for duplicate SKU or barcode",
+    "3. Save product to 'products' table",
+    "4. (Optional) Update stock in inventory service",
+    "5. Return 201 response with created product"
+  ]
+}
