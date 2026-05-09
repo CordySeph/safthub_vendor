@@ -14,7 +14,6 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  bool isOnline = true;
 
   @override
   void initState() {
@@ -29,6 +28,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final auth = context.watch<AuthProvider>();
     final dashboard = context.watch<DashboardProvider>();
     final summary = dashboard.summary;
+    
+    // Check if store is currently closed
+    final bool isClosed = auth.restaurant?.isTemporarilyClosed ?? false;
+    final bool isOnline = !isClosed;
 
     return Scaffold(
       appBar: AppBar(
@@ -51,10 +54,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   value: isOnline,
                   activeTrackColor: const Color(0xFFFF7A00),
                   activeThumbColor: Colors.white,
-                  onChanged: (value) {
-                    setState(() {
-                      isOnline = value;
-                    });
+                  onChanged: (value) async {
+                    final success = await context.read<DashboardProvider>().updateStoreStatus(!value, value ? null : 'Closed by vendor');
+                    if (success && context.mounted) {
+                      // Trigger a refresh of the auth/restaurant profile
+                      await context.read<AuthProvider>().loadUser();
+                    }
                   },
                 ),
               ],

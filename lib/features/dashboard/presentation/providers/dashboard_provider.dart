@@ -26,4 +26,16 @@ class DashboardProvider extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+  Future<bool> updateStoreStatus(bool isClosed, String? reason) async {
+    try {
+      await _apiClient.dio.patch('/vendor/my-restaurant/closure', data: {
+        'is_closed': isClosed,
+        if (reason != null && reason.isNotEmpty) 'reason': reason,
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

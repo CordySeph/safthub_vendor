@@ -21,10 +21,10 @@ class AuthProvider extends ChangeNotifier {
   bool get isAuthenticated => _user != null;
 
   AuthProvider() {
-    _loadUser();
+    loadUser();
   }
 
-  Future<void> _loadUser() async {
+  Future<void> loadUser() async {
     final token = await _storage.read(key: AppConstants.tokenKey);
     if (token != null) {
       _user = await _authService.getProfile();

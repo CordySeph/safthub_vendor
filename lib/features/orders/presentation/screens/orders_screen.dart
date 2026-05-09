@@ -121,7 +121,7 @@ class _OrdersScreenState extends State<OrdersScreen> with SingleTickerProviderSt
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '#${order.id.substring(0, 8).toUpperCase()}',
+                '#${order.id.length >= 8 ? order.id.substring(0, 8).toUpperCase() : order.id.toUpperCase()}',
                 style: TextStyle(
                   fontWeight: FontWeight.bold, 
                   fontSize: 16,

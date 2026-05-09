@@ -24,6 +24,22 @@ class MenuProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> createCategory(String name) async {
+    _isLoading = true;
+    notifyListeners();
+
+    final success = await _menuService.createCategory({
+      'name': name,
+    });
+
+    if (success) {
+      await loadData();
+    }
+    _isLoading = false;
+    notifyListeners();
+    return success;
+  }
+
   Future<bool> createMenuItem(String name, String description, double price, String categoryId, int stock) async {
     _isLoading = true;
     notifyListeners();
@@ -35,6 +51,26 @@ class MenuProvider extends ChangeNotifier {
       'category_id': categoryId,
       'stock_quantity': stock,
       'is_active': true,
+    });
+
+    if (success) {
+      await loadData();
+    }
+    _isLoading = false;
+    notifyListeners();
+    return success;
+  }
+
+  Future<bool> updateMenuItem(String id, String name, String description, double price, String categoryId, int stock) async {
+    _isLoading = true;
+    notifyListeners();
+
+    final success = await _menuService.updateMenuItem(id, {
+      'name': name,
+      'description': description,
+      'price': price,
+      'category_id': categoryId,
+      'stock_quantity': stock,
     });
 
     if (success) {
