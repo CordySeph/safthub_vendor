@@ -81,6 +81,9 @@ class _AddEditStaffScreenState extends State<AddEditStaffScreen> {
             ElevatedButton(
               onPressed: staffProvider.isLoading ? null : () async {
                 if (_formKey.currentState!.validate()) {
+                  final navigator = Navigator.of(context);
+                  final messenger = ScaffoldMessenger.of(context);
+                  
                   bool success;
                   if (isEdit) {
                     success = await staffProvider.updateStaff(
@@ -99,14 +102,12 @@ class _AddEditStaffScreenState extends State<AddEditStaffScreen> {
 
                   if (!mounted) return;
                   if (success) {
-                    Navigator.pop(context);
-                    if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    navigator.pop();
+                    messenger.showSnackBar(
                       SnackBar(content: Text(isEdit ? 'Staff updated' : 'Staff added')),
                     );
                   } else {
-                    if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    messenger.showSnackBar(
                       const SnackBar(content: Text('Operation failed')),
                     );
                   }

@@ -90,6 +90,10 @@ class _EditMenuItemScreenState extends State<EditMenuItemScreen> {
               onPressed: _isSaving ? null : () async {
                 if (_formKey.currentState!.validate()) {
                   setState(() => _isSaving = true);
+                  
+                  final navigator = Navigator.of(context);
+                  final messenger = ScaffoldMessenger.of(context);
+
                   final success = await menuProvider.updateMenuItem(
                     widget.product.id,
                     _nameController.text,
@@ -103,15 +107,12 @@ class _EditMenuItemScreenState extends State<EditMenuItemScreen> {
                   setState(() => _isSaving = false);
 
                   if (success) {
-                    if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    messenger.showSnackBar(
                       const SnackBar(content: Text('Menu item updated successfully')),
                     );
-                    if (!mounted) return;
-                    Navigator.pop(context);
+                    navigator.pop();
                   } else {
-                    if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    messenger.showSnackBar(
                       const SnackBar(content: Text('Failed to update menu item')),
                     );
                   }

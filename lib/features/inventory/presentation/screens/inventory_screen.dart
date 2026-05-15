@@ -253,16 +253,20 @@ class _InventoryScreenState extends State<InventoryScreen> {
             onPressed: () async {
               final newStock = int.tryParse(controller.text);
               if (newStock != null) {
-                final success = await context.read<InventoryProvider>().updateStock(
+                final provider = context.read<InventoryProvider>();
+                final messenger = ScaffoldMessenger.of(context);
+                final navigator = Navigator.of(context);
+                
+                final success = await provider.updateStock(
                   item.menuItemId,
                   newStock,
                   variantId: item.variantId,
                   reason: reasonController.text.isEmpty ? null : reasonController.text,
                 );
+                
                 if (!mounted) return;
-                Navigator.pop(context);
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
+                navigator.pop();
+                messenger.showSnackBar(
                   SnackBar(content: Text(success ? 'Stock updated' : 'Failed to update stock')),
                 );
               }

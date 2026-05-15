@@ -158,10 +158,14 @@ class _StaffManagementScreenState extends State<StaffManagementScreen> {
           TextButton(
             onPressed: () async {
               final staffProvider = context.read<StaffProvider>();
-              Navigator.pop(context);
+              final navigator = Navigator.of(context);
+              final messenger = ScaffoldMessenger.of(context);
+
               final success = await staffProvider.deleteStaff(staff.id);
+              
               if (!mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
+              navigator.pop();
+              messenger.showSnackBar(
                 SnackBar(content: Text(success ? 'Staff removed successfully' : 'Failed to remove staff')),
               );
             },

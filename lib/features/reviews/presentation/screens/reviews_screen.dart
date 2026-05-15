@@ -198,11 +198,14 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
           ElevatedButton(
             onPressed: () async {
               if (controller.text.isNotEmpty) {
+                final navigator = Navigator.of(context);
+                final messenger = ScaffoldMessenger.of(context);
+                
                 final success = await context.read<ReviewProvider>().reply(review.id, controller.text);
+                
                 if (!mounted) return;
-                Navigator.pop(context);
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
+                navigator.pop();
+                messenger.showSnackBar(
                   SnackBar(content: Text(success ? 'Reply posted' : 'Failed to post reply')),
                 );
               }
