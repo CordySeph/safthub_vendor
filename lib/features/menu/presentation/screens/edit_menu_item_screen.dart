@@ -62,7 +62,7 @@ class _EditMenuItemScreenState extends State<EditMenuItemScreen> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _selectedCategoryId,
+              initialValue: _selectedCategoryId,
               decoration: const InputDecoration(labelText: 'Category'),
               items: menuProvider.categories.map((c) => DropdownMenuItem(value: c.id, child: Text(c.name))).toList(),
               onChanged: (v) => setState(() => _selectedCategoryId = v),
@@ -103,11 +103,14 @@ class _EditMenuItemScreenState extends State<EditMenuItemScreen> {
                   setState(() => _isSaving = false);
 
                   if (success) {
+                    if (!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Menu item updated successfully')),
                     );
+                    if (!mounted) return;
                     Navigator.pop(context);
                   } else {
+                    if (!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Failed to update menu item')),
                     );

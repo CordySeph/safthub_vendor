@@ -9,6 +9,12 @@ import 'package:chefship_vendor/core/theme/theme_provider.dart';
 import 'package:chefship_vendor/features/dashboard/presentation/providers/dashboard_provider.dart';
 import 'package:chefship_vendor/features/menu/presentation/providers/menu_provider.dart';
 import 'package:chefship_vendor/features/orders/presentation/providers/order_provider.dart';
+import 'package:chefship_vendor/features/staff/presentation/providers/staff_provider.dart';
+import 'package:chefship_vendor/features/inventory/presentation/providers/inventory_provider.dart';
+import 'package:chefship_vendor/features/discounts/presentation/providers/discount_provider.dart';
+import 'package:chefship_vendor/features/reviews/presentation/providers/review_provider.dart';
+import 'package:chefship_vendor/features/analytics/presentation/providers/analytics_provider.dart';
+import 'package:chefship_vendor/features/menu/presentation/providers/addon_provider.dart';
 
 void main() {
   runApp(
@@ -19,6 +25,12 @@ void main() {
         ChangeNotifierProvider(create: (_) => OrderProvider()),
         ChangeNotifierProvider(create: (_) => MenuProvider()),
         ChangeNotifierProvider(create: (_) => DashboardProvider()),
+        ChangeNotifierProvider(create: (_) => StaffProvider()),
+        ChangeNotifierProvider(create: (_) => InventoryProvider()),
+        ChangeNotifierProvider(create: (_) => DiscountProvider()),
+        ChangeNotifierProvider(create: (_) => ReviewProvider()),
+        ChangeNotifierProvider(create: (_) => AnalyticsProvider()),
+        ChangeNotifierProvider(create: (_) => AddonProvider()),
       ],
       child: const ChefShipVendorApp(),
     ),
