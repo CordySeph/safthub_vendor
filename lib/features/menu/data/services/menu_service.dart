@@ -15,7 +15,7 @@ class MenuService {
 
   Future<bool> createMenuItem(Map<String, dynamic> data) async {
     try {
-      final response = await _apiClient.dio.post('/vendor/menu', data: data);
+      final response = await _apiClient.dio.post('/v2/products/', data: data);
       return response.statusCode == 201;
     } catch (e) {
       return false;
@@ -24,7 +24,7 @@ class MenuService {
 
   Future<bool> updateMenuItem(String menuId, Map<String, dynamic> data) async {
     try {
-      final response = await _apiClient.dio.patch('/vendor/menu/$menuId', data: data);
+      final response = await _apiClient.dio.patch('/v2/products/$menuId', data: data);
       return response.statusCode == 200;
     } catch (e) {
       return false;
@@ -33,7 +33,7 @@ class MenuService {
 
   Future<List<MenuItemModel>> getMenuItems() async {
     try {
-      final response = await _apiClient.dio.get('/vendor/menu');
+      final response = await _apiClient.dio.get('/v2/products');
       final List data = response.data ?? [];
       return data.map((json) => MenuItemModel.fromJson(json)).toList();
     } catch (e) {
