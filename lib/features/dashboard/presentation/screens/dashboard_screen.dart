@@ -102,8 +102,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildContent(AuthProvider auth, Map<String, dynamic>? summary) {
+    final dashboardProvider = context.read<DashboardProvider>();
+
     return RefreshIndicator(
-      onRefresh: () => context.read<DashboardProvider>().fetchSummary(),
+      onRefresh: () => dashboardProvider.fetchSummary(),
       color: const Color(0xFFFF7A00),
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -111,17 +113,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Welcome back,',
-              style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyMedium?.color),
-            ),
-            Text(
-              auth.restaurant?.name ?? 'Store Owner',
-              style: TextStyle(
-                fontSize: 24, 
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).textTheme.titleLarge?.color,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Welcome back,',
+                      style: TextStyle(fontSize: 14, color: Theme.of(context).textTheme.bodyMedium?.color),
+                    ),
+                    Text(
+                      auth.restaurant?.name ?? 'Store Owner',
+                      style: TextStyle(
+                        fontSize: 20, 
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.titleLarge?.color,
+                      ),
+                    ),
+                  ],
+                ),
+                _buildPeriodDropdown(dashboardProvider),
+              ],
             ),
             const SizedBox(height: 24),
             
@@ -135,7 +148,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               childAspectRatio: 1.3,
               children: [
                 StatCard(
-                  title: 'Today\'s Revenue',
+                  title: 'Revenue',
                   value: '฿${summary?['total_revenue'] ?? '0'}',
                   icon: LucideIcons.banknote,
                   iconColor: const Color(0xFFFF7A00),
@@ -148,7 +161,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 StatCard(
                   title: 'Avg. Rating',
-                  value: '4.8', // Real app would get this from summary
+                  value: auth.restaurant?.rating.toStringAsFixed(1) ?? '0.0',
                   icon: LucideIcons.star,
                   iconColor: Colors.amber,
                 ),
@@ -163,30 +176,56 @@ class _DashboardScreenState extends State<DashboardScreen> {
             
             const SizedBox(height: 32),
             
-            // Active Orders Section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Quick Actions',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ],
+            const Text(
+              'Quick Actions',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             _buildQuickActions(),
             
             const SizedBox(height: 32),
             
-            // Popular Items (Mock)
             const Text(
               'Popular Items',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            _buildPopularItems(),
+            _buildPopularItems(summary?['popular_items']),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildPeriodDropdown(DashboardProvider provider) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+      ),
+      child: DropdownButton<String>(
+        value: provider.currentPeriod,
+        underline: const SizedBox(),
+        icon: const Icon(LucideIcons.chevronDown, size: 16),
+        style: TextStyle(
+          color: Theme.of(context).textTheme.bodyLarge?.color,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+        ),
+        onChanged: (String? newValue) {
+          if (newValue != null) {
+            provider.fetchSummary(period: newValue);
+          }
+        },
+        items: const [
+          DropdownMenuItem(value: 'today', child: Text('Today')),
+          DropdownMenuItem(value: 'week', child: Text('This Week')),
+          DropdownMenuItem(value: 'month', child: Text('This Month')),
+          DropdownMenuItem(value: 'year', child: Text('This Year')),
+          DropdownMenuItem(value: 'all_time', child: Text('All Time')),
+        ],
       ),
     );
   }
@@ -212,18 +251,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _actionButton(IconData icon, String label, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           color: Theme.of(context).cardTheme.color,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: Theme.of(context).brightness == Brightness.dark ? null : [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            )
-          ],
+          border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
         ),
         child: Column(
           children: [
@@ -236,28 +270,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildPopularItems() {
-    final List<Map<String, dynamic>> popularItems = [
-      {'name': 'Pad Thai Kung Sod', 'sold': '124', 'revenue': '฿18,600'},
-      {'name': 'Tom Yum Goong', 'sold': '98', 'revenue': '฿19,600'},
-    ];
+  Widget _buildPopularItems(List<dynamic>? items) {
+    if (items == null || items.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Text(
+            'No data available for this period',
+            style: TextStyle(color: Colors.grey[600], fontSize: 14),
+          ),
+        ),
+      );
+    }
 
     return Column(
-      children: popularItems.map((item) {
+      children: items.map((item) {
         return ListTile(
           contentPadding: EdgeInsets.zero,
           leading: Container(
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.5),
+              color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(LucideIcons.utensils, color: Theme.of(context).colorScheme.primary, size: 20),
           ),
-          title: Text(item['name'], style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 15)),
-          subtitle: Text('${item['sold']} sold', style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 13)),
-          trailing: Text(item['revenue'], style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontWeight: FontWeight.bold)),
+          title: Text(item['menu_item_name'] ?? 'Unknown Item', style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 15)),
+          subtitle: Text('${item['total_quantity_sold'] ?? 0} sold', style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 13)),
+          trailing: Text('฿${item['total_revenue'] ?? 0}', style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontWeight: FontWeight.bold)),
         );
       }).toList(),
     );

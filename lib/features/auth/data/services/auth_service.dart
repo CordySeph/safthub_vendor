@@ -52,6 +52,15 @@ class AuthService {
     }
   }
 
+  Future<bool> updateStore(Map<String, dynamic> data) async {
+    try {
+      final response = await _apiClient.dio.patch('/vendor/my-restaurant', data: data);
+      return response.statusCode == 200;
+    } on DioException catch (e) {
+      throw e.response?.data['message'] ?? 'Update failed';
+    }
+  }
+
   Future<UserModel?> getProfile() async {
     try {
       final response = await _apiClient.dio.get('/auth/me');

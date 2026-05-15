@@ -9,6 +9,10 @@ class RestaurantModel {
   final double rating;
   final String? logoUrl;
   final String? coverPhotoUrl;
+  final String? phoneNumber;
+  final String? category;
+  final String? priceRange;
+  final Map<String, dynamic>? businessHours;
 
   RestaurantModel({
     required this.id,
@@ -21,6 +25,10 @@ class RestaurantModel {
     required this.rating,
     this.logoUrl,
     this.coverPhotoUrl,
+    this.phoneNumber,
+    this.category,
+    this.priceRange,
+    this.businessHours,
   });
 
   factory RestaurantModel.fromJson(Map<String, dynamic> json) {
@@ -35,6 +43,10 @@ class RestaurantModel {
       rating: (json['Rating'] ?? json['rating'] ?? 0).toDouble(),
       logoUrl: json['LogoURL'] ?? json['logo_url'],
       coverPhotoUrl: json['CoverPhotoURL'] ?? json['cover_photo_url'],
+      phoneNumber: json['PhoneNumber'] ?? json['phone_number'],
+      category: json['Category'] ?? json['category'],
+      priceRange: json['PriceRange'] ?? json['price_range'],
+      businessHours: json['BusinessHours'] ?? json['business_hours'],
     );
   }
 }

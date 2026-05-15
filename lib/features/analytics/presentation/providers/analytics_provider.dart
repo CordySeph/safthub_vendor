@@ -17,6 +17,14 @@ class AnalyticsProvider extends ChangeNotifier {
   List<PopularItem> get popularItems => _popularItems;
   bool get isLoading => _isLoading;
 
+  Future<Map<String, dynamic>> fetchTransactions({String period = 'month', int page = 1}) async {
+    return await _analyticsService.getTransactions(period: period, page: page);
+  }
+
+  Future<Map<String, dynamic>> fetchPayoutHistory({int page = 1}) async {
+    return await _analyticsService.getPayoutHistory(page: page);
+  }
+
   Future<void> loadAnalytics({String period = 'month'}) async {
     _isLoading = true;
     notifyListeners();

@@ -45,4 +45,29 @@ class AnalyticsService {
       return [];
     }
   }
+
+  Future<Map<String, dynamic>> getTransactions({String period = 'month', int page = 1, int limit = 10}) async {
+    try {
+      final response = await _apiClient.dio.get('$_basePath/transactions', queryParameters: {
+        'period': period,
+        'page': page,
+        'limit': limit,
+      });
+      return response.data;
+    } catch (e) {
+      return {'data': [], 'pagination': {'currentPage': 1, 'totalPages': 0, 'totalItems': 0}};
+    }
+  }
+
+  Future<Map<String, dynamic>> getPayoutHistory({int page = 1, int limit = 10}) async {
+    try {
+      final response = await _apiClient.dio.get('$_basePath/payout-history', queryParameters: {
+        'page': page,
+        'limit': limit,
+      });
+      return response.data;
+    } catch (e) {
+      return {'data': [], 'pagination': {'currentPage': 1, 'totalPages': 0, 'totalItems': 0}};
+    }
+  }
 }

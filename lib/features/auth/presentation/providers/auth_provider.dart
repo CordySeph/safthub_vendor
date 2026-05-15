@@ -125,6 +125,29 @@ class AuthProvider extends ChangeNotifier {
     return false;
   }
 
+  Future<bool> updateStoreDetails(Map<String, dynamic> data) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      // Re-using the same API client/service pattern, assuming /api/vendor/my-restaurant PATCH
+      final response = await _authService.updateStore(data);
+      if (response) {
+        _restaurant = await _authService.getMyRestaurant();
+      }
+      _isLoading = false;
+      notifyListeners();
+      return response;
+    } catch (e) {
+      _error = e.toString();
+    }
+
+    _isLoading = false;
+    notifyListeners();
+    return false;
+  }
+
   Future<void> logout() async {
     await _storage.delete(key: AppConstants.tokenKey);
     _user = null;

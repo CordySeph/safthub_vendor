@@ -5,6 +5,10 @@ import 'package:chefship_vendor/features/auth/presentation/providers/auth_provid
 import 'package:chefship_vendor/core/theme/theme_provider.dart';
 import 'bank_accounts_screen.dart';
 import 'support_tickets_screen.dart';
+import 'store_details_screen.dart';
+import 'business_hours_screen.dart';
+import 'package:chefship_vendor/features/analytics/presentation/screens/payout_history_screen.dart';
+import 'package:chefship_vendor/features/analytics/presentation/screens/transaction_history_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -25,8 +29,18 @@ class ProfileScreen extends StatelessWidget {
             _buildStoreHeader(auth),
             const SizedBox(height: 32),
             _buildMenuSection(context, 'Store Management', [
-              _buildMenuItem(context, LucideIcons.store, 'Store Details', 'Name, address, contact', () {}),
-              _buildMenuItem(context, LucideIcons.clock, 'Business Hours', 'Set opening times', () {}),
+              _buildMenuItem(context, LucideIcons.store, 'Store Details', 'Name, address, contact', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const StoreDetailsScreen()),
+                );
+              }),
+              _buildMenuItem(context, LucideIcons.clock, 'Business Hours', 'Set opening times', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const BusinessHoursScreen()),
+                );
+              }),
               _buildThemeTile(context, themeProvider),
               _buildMenuItem(context, LucideIcons.settings, 'Settings', 'Notifications, app settings', () {}),
             ]),
@@ -37,7 +51,18 @@ class ProfileScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const BankAccountsScreen()),
                 );
               }),
-              _buildMenuItem(context, LucideIcons.history, 'Payout History', 'View past transactions', () {}),
+              _buildMenuItem(context, LucideIcons.history, 'Transaction History', 'View past orders and revenue', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const TransactionHistoryScreen()),
+                );
+              }),
+              _buildMenuItem(context, LucideIcons.landmark, 'Payout History', 'View past bank transfers', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PayoutHistoryScreen()),
+                );
+              }),
             ]),
             _buildMenuSection(context, 'Other', [
               _buildMenuItem(context, LucideIcons.helpCircle, 'Help & Support', 'Get assistance', () {

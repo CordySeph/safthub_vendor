@@ -6,17 +6,20 @@ class DashboardProvider extends ChangeNotifier {
 
   Map<String, dynamic>? _summary;
   bool _isLoading = false;
+  String _currentPeriod = 'today';
 
   Map<String, dynamic>? get summary => _summary;
   bool get isLoading => _isLoading;
+  String get currentPeriod => _currentPeriod;
 
-  Future<void> fetchSummary() async {
+  Future<void> fetchSummary({String? period}) async {
+    if (period != null) _currentPeriod = period;
     _isLoading = true;
     notifyListeners();
 
     try {
       final response = await _apiClient.dio.get('/vendor/analytics/summary', queryParameters: {
-        'period': 'today',
+        'period': _currentPeriod,
       });
       _summary = response.data;
     } catch (e) {
