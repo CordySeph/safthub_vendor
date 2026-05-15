@@ -4,6 +4,8 @@ import 'core/theme/app_theme.dart';
 import 'features/main_wrapper.dart';
 import 'features/auth/presentation/providers/auth_provider.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
+import 'features/auth/presentation/screens/store_registration_screen.dart';
+import 'features/auth/presentation/screens/pending_approval_screen.dart';
 
 import 'package:chefship_vendor/core/theme/theme_provider.dart';
 import 'package:chefship_vendor/features/dashboard/presentation/providers/dashboard_provider.dart';
@@ -15,6 +17,10 @@ import 'package:chefship_vendor/features/discounts/presentation/providers/discou
 import 'package:chefship_vendor/features/reviews/presentation/providers/review_provider.dart';
 import 'package:chefship_vendor/features/analytics/presentation/providers/analytics_provider.dart';
 import 'package:chefship_vendor/features/menu/presentation/providers/addon_provider.dart';
+
+import 'package:chefship_vendor/features/profile/presentation/providers/bank_provider.dart';
+
+import 'package:chefship_vendor/features/profile/presentation/providers/support_provider.dart';
 
 void main() {
   runApp(
@@ -31,6 +37,8 @@ void main() {
         ChangeNotifierProvider(create: (_) => ReviewProvider()),
         ChangeNotifierProvider(create: (_) => AnalyticsProvider()),
         ChangeNotifierProvider(create: (_) => AddonProvider()),
+        ChangeNotifierProvider(create: (_) => BankProvider()),
+        ChangeNotifierProvider(create: (_) => SupportProvider()),
       ],
       child: const ChefShipVendorApp(),
     ),
@@ -52,10 +60,19 @@ class ChefShipVendorApp extends StatelessWidget {
       themeMode: themeProvider.themeMode,
       home: Consumer<AuthProvider>(
         builder: (context, auth, _) {
-          if (auth.isAuthenticated) {
-            return const MainWrapper();
+          if (!auth.isAuthenticated) {
+            return const LoginScreen();
           }
-          return const LoginScreen();
+
+          if (auth.restaurant == null) {
+            return const StoreRegistrationScreen();
+          }
+
+          if (auth.restaurant!.status.toLowerCase() == 'pending') {
+            return const PendingApprovalScreen();
+          }
+
+          return const MainWrapper();
         },
       ),
     );

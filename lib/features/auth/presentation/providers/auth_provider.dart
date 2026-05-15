@@ -61,6 +61,70 @@ class AuthProvider extends ChangeNotifier {
     return false;
   }
 
+  Future<bool> register(String name, String email, String password, String? phoneNumber) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final success = await _authService.register({
+        'name': name,
+        'email': email,
+        'password': password,
+        'phoneNumber': phoneNumber,
+        'role': 'vendor',
+      });
+      _isLoading = false;
+      notifyListeners();
+      return success;
+    } catch (e) {
+      _error = e.toString();
+    }
+
+    _isLoading = false;
+    notifyListeners();
+    return false;
+  }
+
+  Future<Map<String, dynamic>?> checkStoreLocation(double lat, double lng) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final result = await _authService.checkLocation(lat, lng);
+      _isLoading = false;
+      notifyListeners();
+      return result;
+    } catch (e) {
+      _error = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      return null;
+    }
+  }
+
+  Future<bool> registerStore(Map<String, dynamic> data) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final success = await _authService.registerStore(data);
+      if (success) {
+        _restaurant = await _authService.getMyRestaurant();
+      }
+      _isLoading = false;
+      notifyListeners();
+      return success;
+    } catch (e) {
+      _error = e.toString();
+    }
+
+    _isLoading = false;
+    notifyListeners();
+    return false;
+  }
+
   Future<void> logout() async {
     await _storage.delete(key: AppConstants.tokenKey);
     _user = null;

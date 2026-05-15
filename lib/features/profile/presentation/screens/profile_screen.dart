@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:chefship_vendor/features/auth/presentation/providers/auth_provider.dart';
-
 import 'package:chefship_vendor/core/theme/theme_provider.dart';
+import 'bank_accounts_screen.dart';
+import 'support_tickets_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -30,11 +31,21 @@ class ProfileScreen extends StatelessWidget {
               _buildMenuItem(context, LucideIcons.settings, 'Settings', 'Notifications, app settings', () {}),
             ]),
             _buildMenuSection(context, 'Financials', [
-              _buildMenuItem(context, LucideIcons.creditCard, 'Bank Accounts', 'Manage payout methods', () {}),
+              _buildMenuItem(context, LucideIcons.creditCard, 'Bank Accounts', 'Manage payout methods', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const BankAccountsScreen()),
+                );
+              }),
               _buildMenuItem(context, LucideIcons.history, 'Payout History', 'View past transactions', () {}),
             ]),
             _buildMenuSection(context, 'Other', [
-              _buildMenuItem(context, LucideIcons.helpCircle, 'Help & Support', 'Get assistance', () {}),
+              _buildMenuItem(context, LucideIcons.helpCircle, 'Help & Support', 'Get assistance', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SupportTicketsScreen()),
+                );
+              }),
               _buildMenuItem(context, LucideIcons.logOut, 'Logout', 'Exit your account', () {
                 context.read<AuthProvider>().logout();
               }, isDestructive: true),

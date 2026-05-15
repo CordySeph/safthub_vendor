@@ -22,6 +22,36 @@ class AuthService {
     return null;
   }
 
+  Future<bool> register(Map<String, dynamic> data) async {
+    try {
+      final response = await _apiClient.dio.post('/auth/register', data: data);
+      return response.statusCode == 201;
+    } on DioException catch (e) {
+      throw e.response?.data['message'] ?? 'Registration failed';
+    }
+  }
+
+  Future<Map<String, dynamic>> checkLocation(double lat, double lng) async {
+    try {
+      final response = await _apiClient.dio.post('/vendor/check-location', data: {
+        'latitude': lat,
+        'longitude': lng,
+      });
+      return response.data;
+    } on DioException catch (e) {
+      throw e.response?.data['message'] ?? 'Location check failed';
+    }
+  }
+
+  Future<bool> registerStore(Map<String, dynamic> data) async {
+    try {
+      final response = await _apiClient.dio.post('/vendor/register-store', data: data);
+      return response.statusCode == 201;
+    } on DioException catch (e) {
+      throw e.response?.data['message'] ?? 'Store registration failed';
+    }
+  }
+
   Future<UserModel?> getProfile() async {
     try {
       final response = await _apiClient.dio.get('/auth/me');
