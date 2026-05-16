@@ -5,6 +5,9 @@ import 'package:chefship_vendor/core/widgets/stat_card.dart';
 import 'package:chefship_vendor/core/widgets/shimmer_loading.dart';
 import 'package:chefship_vendor/features/dashboard/presentation/providers/dashboard_provider.dart';
 import 'package:chefship_vendor/features/auth/presentation/providers/auth_provider.dart';
+import 'package:chefship_vendor/features/menu/presentation/screens/add_menu_item_screen.dart';
+import 'package:chefship_vendor/features/discounts/presentation/screens/discounts_screen.dart';
+import 'package:chefship_vendor/features/reviews/presentation/screens/reviews_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -230,19 +233,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+
+
+// ... (existing imports)
+
   Widget _buildQuickActions() {
     return Row(
       children: [
         Expanded(
-          child: _actionButton(LucideIcons.plusCircle, 'Add Menu', () {}),
+          child: _actionButton(LucideIcons.plusCircle, 'Add Menu', () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const AddMenuItemScreen()));
+          }),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _actionButton(LucideIcons.percent, 'Discounts', () {}),
+          child: _actionButton(LucideIcons.percent, 'Discounts', () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const DiscountsScreen()));
+          }),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _actionButton(LucideIcons.messageSquare, 'Reviews', () {}),
+          child: _actionButton(LucideIcons.messageSquare, 'Reviews', () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const ReviewsScreen()));
+          }),
         ),
       ],
     );
